@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "867550552049",
+    "project_id": "attendancesystem-156ce",
+    "storage_bucket": "attendancesystem-156ce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867550552049:android:c6a2ef853bddb7e47b2e50",
+        "android_client_info": {
+          "package_name": "com.example.attendace_system_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM4M5OQWQL_aM80bIZqkxV2CcRKBdc-lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867550552049:android:25b8cb393035117e7b2e50",
+        "android_client_info": {
+          "package_name": "com.example.attendance_system_flutter_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM4M5OQWQL_aM80bIZqkxV2CcRKBdc-lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
