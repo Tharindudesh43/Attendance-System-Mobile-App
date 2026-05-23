@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:attendance_system_flutter_application/Pages/DiscoverPage.dart';
 import 'package:attendance_system_flutter_application/Pages/SelectAuthPage.dart'
     show Selectauthpage;
@@ -11,8 +13,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
   await dotenv.load(fileName: ".env");
   try {
     await Firebase.initializeApp();

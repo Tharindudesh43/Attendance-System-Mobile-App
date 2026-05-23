@@ -8,11 +8,14 @@ class MongodbServices {
 
   static Future<Db> connect() async {
     final mongoUrl = dotenv.env['MONGODB_URL']!;
-    
+
     var db = await Db.create(
       mongoUrl,
     );
-    await db.open();
+     await db.open(
+        secure: true,
+        tlsAllowInvalidCertificates: true,
+      );
     print("✅ Connected to MongoDB");
     return db;
   }
@@ -300,7 +303,6 @@ class MongodbServices {
         };
       }
       print(newReport);
-      ;
       final db = await connect();
       final collection = db.collection('At_Reports');
 
