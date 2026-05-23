@@ -5,7 +5,6 @@ class Validation {
   final RegExp phoneRegEx = RegExp(r'^\d{10}$');
 
   checkvalidation({required String FieldValue, required int Fieldnumber}) {
-    //Empty Check
     if (FieldValue.isEmpty && Fieldnumber == 1) {
       return "Please fill the full name field";
     } else if (FieldValue.isEmpty && Fieldnumber == 2) {
