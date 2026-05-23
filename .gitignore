@@ -70,7 +70,7 @@ GoogleService-Info.plist
 firebase_options.dart
 
 
-# Environment Variables (Never commit these!)
+# Environment Variables
 .env
 .env.local
 .env.production
