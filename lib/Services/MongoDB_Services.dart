@@ -1,4 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MongodbServices {
   static const COLLECTION_NAME = "At_admin_lecturer_details";
@@ -6,8 +7,10 @@ class MongodbServices {
   static final DbCollection user = db!.collection('At_admin_lecturer_details');
 
   static Future<Db> connect() async {
+    final mongoUrl = dotenv.env['MONGODB_URL']!;
+    
     var db = await Db.create(
-      'mongodb+srv://tharindudeshanhimahansa43:TfA6q3iUaaI8Tdw9@atsyscluster0.zzmn1.mongodb.net/AttendanceSystem?retryWrites=true&w=majority&appName=AtSysCluster0',
+      mongoUrl,
     );
     await db.open();
     print("✅ Connected to MongoDB");
