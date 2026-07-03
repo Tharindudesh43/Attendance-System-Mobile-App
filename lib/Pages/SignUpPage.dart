@@ -14,9 +14,8 @@ import 'package:attendance_system_flutter_application/Widgets/Date_Picker.dart';
 
 import 'package:attendance_system_flutter_application/Widgets/DropDown.dart'
     show Dropdown;
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:attendance_system_flutter_application/Widgets/ModernDropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -62,10 +61,14 @@ class _SignupPage extends ConsumerState<SignupPage> {
   String? degreenameErrorText;
   String? intialnameErrorText;
 
-  String selectedfaculty = "Faculty";
-  String selectedDepartment = "Department";
-  String selectedyear = "Year";
-  String selectedsemester = "Semester";
+  //String selectedfaculty = "Faculty";
+  //String selectedDepartment = "Department";
+  String? selectedfaculty;
+  String? selectedDepartment;
+  String? selectedyear;
+  String? selectedsemester;
+  // String selectedyear = "Year";
+  // String selectedsemester = "Semester";
   String front_of_the_registration_number = "SEU/IS/";
 
   bool loop = true;
@@ -300,63 +303,105 @@ class _SignupPage extends ConsumerState<SignupPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: 37,
-                      right: 8,
-                      top: 5,
-                      bottom: 5,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 8.0,
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Dropdown(
-                          Data: Faculty,
-                          selecteddata: selectedfaculty,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedfaculty = value;
-                            });
-                          },
-                        ),
-                        Dropdown(
-                          Data: Department,
-                          selecteddata: selectedDepartment,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedDepartment = value;
-                            });
-                          },
+                        Icon(Icons.school, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: ModernDropdown(
+                            hintText: "Select Faculty",
+                            items: Faculty,
+                            selectedItem: selectedfaculty,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedfaculty = value!;
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: 37,
-                      right: 8,
-                      top: 5,
-                      bottom: 5,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 8.0,
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Dropdown(
-                          Data: Year,
-                          selecteddata: selectedyear,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedyear = value;
-                            });
-                          },
+                        Icon(Icons.business, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: ModernDropdown(
+                            hintText: "Select Department",
+                            items: Department,
+                            selectedItem: selectedDepartment,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDepartment = value!;
+                              });
+                            },
+                          ),
                         ),
-                        Dropdown(
-                          Data: Semester,
-                          selecteddata: selectedsemester,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedsemester = value;
-                            });
-                          },
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.school, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: ModernDropdown(
+                            hintText: "Select Year",
+                            items: Year,
+                            selectedItem: selectedyear,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedyear = value!;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.science_outlined, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: ModernDropdown(
+                            hintText: "Select Semester",
+                            items: Semester,
+                            selectedItem: selectedsemester,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedsemester = value!;
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -373,6 +418,7 @@ class _SignupPage extends ConsumerState<SignupPage> {
                             controller: mobilenumberFieldController,
                             errorText: mobilenumberErrorText,
                           ),
+                          SizedBox(width: 15),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Icon(Icons.cake_outlined, size: 20),
@@ -390,7 +436,7 @@ class _SignupPage extends ConsumerState<SignupPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 6, right: 22),
+                    padding: const EdgeInsets.only(left: 6, right: 20),
                     child: Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -582,10 +628,10 @@ class _SignupPage extends ConsumerState<SignupPage> {
                                   password: passwordFieldController.text.trim(),
                                   degreename: degreenameFieldController.text
                                       .trim(),
-                                  faculty: selectedfaculty,
-                                  department: selectedDepartment,
-                                  Year: selectedyear,
-                                  Semester: selectedsemester,
+                                  faculty: selectedfaculty!,
+                                  department: selectedDepartment!,
+                                  Year: selectedyear!,
+                                  Semester: selectedsemester!,
                                   mobilenumber: mobilenumberFieldController.text
                                       .trim(),
                                   birthday: DateFormat(
@@ -597,6 +643,7 @@ class _SignupPage extends ConsumerState<SignupPage> {
                                   attendance_history: [],
                                   reports: [],
                                   notifications: [],
+                                  Count_Attendance: [],
                                 ).then((value) {
                                   if (value == "User Added") {
                                     Flushbar(

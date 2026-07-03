@@ -39,9 +39,9 @@ class _Selectauthpagetate extends State<Selectauthpage> {
     return Scaffold(
       bottomNavigationBar: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(20),
         child: Text(
-          '© 2025 Marky. All rights reserved.',
+          '© 2026 Marky. All rights reserved.',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,

@@ -35,6 +35,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   void initState() {
     super.initState();
     FirebaseServices.getCurrent_User_Details().then((value) {
+      print("DATA: $value");
       ref
           .read(riverpodUserData)
           .UserData_Add(

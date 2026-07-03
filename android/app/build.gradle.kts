@@ -33,6 +33,12 @@ android {
         multiDexEnabled = true
     }
 
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -50,8 +56,10 @@ dependencies {
     // Required for flutter_local_notifications
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
+    implementation(platform("com.google.firebase:firebase-bom:34.14.0"))
+
     // Optional but recommended for stability
     implementation("androidx.multidex:multidex:2.0.1")
 
-    //implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-analytics")
 }

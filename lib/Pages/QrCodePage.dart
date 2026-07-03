@@ -36,7 +36,7 @@ class _QrcodepageState extends ConsumerState<Qrcodepage>
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
     if (status.isGranted) {
-      _barcodeSubscription = _cameraController.barcodes.listen(_onDetect);
+      // _barcodeSubscription = _cameraController.barcodes.listen(_onDetect);
       await _cameraController.start();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -98,7 +98,7 @@ class _QrcodepageState extends ConsumerState<Qrcodepage>
     if (!_cameraController.value.hasCameraPermission) return;
     switch (state) {
       case AppLifecycleState.resumed:
-        _barcodeSubscription = _cameraController.barcodes.listen(_onDetect);
+        // _barcodeSubscription = _cameraController.barcodes.listen(_onDetect);
         _cameraController.start();
         break;
       case AppLifecycleState.inactive:
@@ -115,7 +115,7 @@ class _QrcodepageState extends ConsumerState<Qrcodepage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _barcodeSubscription?.cancel();
+    // _barcodeSubscription?.cancel();
     _barcodeSubscription = null;
     _cameraController.stop();
     _cameraController.dispose();
@@ -128,14 +128,7 @@ class _QrcodepageState extends ConsumerState<Qrcodepage>
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Discoverpage(pagenumber: 1),
-              ),
-            );
-          },
+         onPressed: () => Navigator.pop(context)
         ),
         title: const Text('QR Scanner', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromRGBO(2, 109, 148, 1),

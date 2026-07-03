@@ -9,13 +9,8 @@ class MongodbServices {
   static Future<Db> connect() async {
     final mongoUrl = dotenv.env['MONGODB_URL']!;
 
-    var db = await Db.create(
-      mongoUrl,
-    );
-     await db.open(
-        secure: true,
-        tlsAllowInvalidCertificates: true,
-      );
+    var db = await Db.create(mongoUrl);
+    await db.open(secure: true, tlsAllowInvalidCertificates: true);
     print("✅ Connected to MongoDB");
     return db;
   }
@@ -118,6 +113,21 @@ class MongodbServices {
     }
   }
 
+static Future<void> testConnection() async {
+  try {
+    final db = await connect();
+    
+    print("🟢 MongoDB Connected: ${db.databaseName}"); // ✅ print DB name
+    print("🔗 Connection string DB: ${db}");       // ✅ print full URI
+
+    final collections = await db.getCollectionNames();
+    print("📂 Collections: $collections");
+
+  } catch (e) {
+    print("🔴 MongoDB Error: $e");
+  }
+}
+
   static Future<String?> duplicatecheck({
     required String QrCode,
     required String Year,
@@ -132,6 +142,9 @@ class MongodbServices {
 
       final objId = ObjectId.parse(LecId_By_Qr);
       final user = await collection.findOne(where.eq('_id', objId));
+
+      await testConnection();
+
       var dupchecklist = [];
       var checklistattendace = [];
       var dupcheck_int = 0;
@@ -246,7 +259,7 @@ class MongodbServices {
         }
       } else {
         print("Lecturer not found");
-        return "Lecturer not found";
+        return "";
       }
       await db.close();
       print("❎ Connection closed");

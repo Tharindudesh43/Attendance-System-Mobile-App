@@ -40,7 +40,8 @@ class FirebaseAuthentications {
     required String Semester,
     required List attendance_history,
     required List reports,
-    required List notifications
+    required List notifications,
+    required List Count_Attendance
   }) async {
     try {
       // Attempt to create a new user with email and password
@@ -66,7 +67,8 @@ class FirebaseAuthentications {
         semester: Semester,
         registernumber: registrationnumber,
         reports: reports,
-        notifications: notifications
+        notifications: notifications,
+        Count_Attendance: Count_Attendance
       );
       // }
       //  });

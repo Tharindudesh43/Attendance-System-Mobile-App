@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:attendance_system_flutter_application/Pages/DiscoverPage.dart';
 import 'package:attendance_system_flutter_application/Pages/SelectAuthPage.dart'
@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
+
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -26,18 +28,32 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   await dotenv.load(fileName: ".env");
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   try {
-    await Firebase.initializeApp();
-    await MongodbServices.connect();
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    await NotificationServices.initLocalNotifications();
-    await NotificationServices.initFirebaseMessaging();
-  } catch (e) {
-    debugPrint("❌ Error initializing Firebase or MongoDB: $e");
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: FirebaseOptions(
+          apiKey: dotenv.env['FIREBASE_API_KEY']!,
+          appId: dotenv.env['FIREBASE_APP_ID']!,
+          messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
+          projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+        ),
+      );
+    }
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') rethrow;
   }
-  await dotenv.load(fileName: ".env");
+
+  await MongodbServices.connect();
+  await NotificationServices.initLocalNotifications();
+  await NotificationServices.initFirebaseMessaging();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(const ProviderScope(child: MyApp()));
 }
+
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -55,6 +71,7 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
+
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});

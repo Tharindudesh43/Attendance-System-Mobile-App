@@ -1,25 +1,27 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-/// Handle background messages
+// ✅ FIX 1 — Add @pragma and Firebase.initializeApp() in background handler
+@pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(); // ❌ was missing — causes background notifications to fail
   print('📩 Background message received');
   print('Title: ${message.notification?.title}');
   print('Body: ${message.notification?.body}');
-  print('Data: ${message.data}');
+
+  // ✅ FIX 2 — Show notification in background too (was missing)
+  await NotificationServices.showLocalNotification(message);
 }
 
-/// Notification Service Class
 class NotificationServices {
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
 
-  // Optional callback to handle incoming notifications
   static void Function(RemoteMessage message)? onNotificationReceived;
 
-  /// Initialize local notifications
   static Future<void> initLocalNotifications() async {
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -30,26 +32,40 @@ class NotificationServices {
 
     await _localNotifications.initialize(initSettings);
 
-    // Android 13+ permission
+    // ✅ FIX 3 — Create notification channel (was missing — required for Android 8+)
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'attendance_channel',
+      'Attendance Notifications',
+      description: 'Notifications for attendance app',
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+    );
+
+    await _localNotifications
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    print("✅ Notification channel created");
+
     await _requestNotificationPermission();
   }
 
-  /// Request notification permission (Android 13+)
   static Future<void> _requestNotificationPermission() async {
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
-    print('User granted permission: ${settings.authorizationStatus}');
+    print('🔔 Permission: ${settings.authorizationStatus}');
   }
 
-  /// Show a local notification
   static Future<void> showLocalNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          'attendance_channel', // channel id
-          'Attendance Notifications', // channel name
+          'attendance_channel',
+          'Attendance Notifications',
           channelDescription: 'Notifications for attendance app',
           importance: Importance.max,
           priority: Priority.high,
@@ -62,40 +78,49 @@ class NotificationServices {
 
     try {
       await _localNotifications.show(
-        message.hashCode, // unique id for each notification
+        message.hashCode,
         message.notification?.title ?? 'No Title',
         message.notification?.body ?? 'No Body',
         platformDetails,
       );
     } catch (e) {
-      print('Error showing notification: $e');
+      print('❌ Error showing notification: $e');
     }
   }
 
-  /// Initialize Firebase Messaging and listeners
   static Future<void> initFirebaseMessaging() async {
-    // Print FCM token
-    final token = await _firebaseMessaging.getToken();
-    print('FCM Token: $token');
-
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('📩 Foreground message: ${message.notification?.title}');
-      showLocalNotification(message);
-
-      // Call the Riverpod callback if provided
-      onNotificationReceived?.call(message);
-    });
-
-    // Handle messages when app opened from background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('📩 Opened app via notification: ${message.notification?.title}');
-      showLocalNotification(message);
-
-      onNotificationReceived?.call(message);
-    });
-
-    // Handle background/terminated messages
+    // ✅ FIX 4 — Register background handler FIRST before anything else
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+    final token = await _firebaseMessaging.getToken();
+    print('📱 FCM Token: $token');
+
+    // ✅ FIX 5 — Show foreground notifications as popups
+    await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    // Foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('📩 Foreground: ${message.notification?.title}');
+      showLocalNotification(message);
+      onNotificationReceived?.call(message);
+    });
+
+    // Background → tapped
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('📲 Opened from background: ${message.notification?.title}');
+      onNotificationReceived?.call(message);
+    });
+
+    // ✅ FIX 6 — Handle terminated state (app was fully closed)
+    RemoteMessage? initialMessage =
+        await _firebaseMessaging.getInitialMessage();
+    if (initialMessage != null) {
+      print('🚀 Opened from terminated: ${initialMessage.notification?.title}');
+      onNotificationReceived?.call(initialMessage);
+    }
   }
 }

@@ -87,6 +87,7 @@ class FirebaseServices {
     required List attendance_history,
     required List reports,
     required List notifications,
+    required List Count_Attendance
   }) async {
     try {
       CollectionReference userCollectionReference = FirebaseFirestore.instance
@@ -108,6 +109,7 @@ class FirebaseServices {
         "userImage": userimageUrl,
         "birthday": birthday,
         "notifications": notifications,
+        "Count_Attendance": Count_Attendance
       });
 
       print("user added to firestore");
@@ -192,8 +194,7 @@ class FirebaseServices {
         ),
       );
       // print(Current_User_Details[0].attendance_history?[0]["date"]);
-      print(Current_User_Details[0].attendance_count);
-      print(Current_User_Details);
+      print("DDDD: $Current_User_Details[0].attendance_count");
       return Current_User_Details;
     } catch (e) {
       print("Cant get all to do tasks: $e");

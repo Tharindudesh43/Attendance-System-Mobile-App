@@ -79,7 +79,6 @@ class _LoginpageState extends State<Loginpage> {
                                 email: emailFieldController.text.trim(),
                                 password: passwordFieldController.text.trim(),
                               ).then((value) {
-                                print("dsdd");
                                 print(value);
                                 if (value == "invalid-credential") {
                                   setState(() {
