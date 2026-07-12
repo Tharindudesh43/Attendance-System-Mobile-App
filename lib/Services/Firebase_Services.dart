@@ -87,7 +87,7 @@ class FirebaseServices {
     required List attendance_history,
     required List reports,
     required List notifications,
-    required List Count_Attendance
+    required List Count_Attendance,
   }) async {
     try {
       CollectionReference userCollectionReference = FirebaseFirestore.instance
@@ -109,7 +109,7 @@ class FirebaseServices {
         "userImage": userimageUrl,
         "birthday": birthday,
         "notifications": notifications,
-        "Count_Attendance": Count_Attendance
+        "Count_Attendance": Count_Attendance,
       });
 
       print("user added to firestore");
